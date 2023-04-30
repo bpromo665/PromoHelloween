@@ -6,7 +6,7 @@ APP_HOST = '0.0.0.0'  # Default value
 APP_PORT = '8444'  # Default value
 
 # Webhook configuration
-APP_NAME = 'Your-bot-here.herokuapp.com'
+APP_NAME = 'test-web-interface.herokuapp.com'
 WEB_HOOK_URL = f'https://{APP_NAME}/{BOT_API}'
 
 # Database configuration

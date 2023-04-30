@@ -35,14 +35,5 @@ def webhook():
     return '!', 200
 
 
-@app.route('/settings', methods=['POST', 'GET'])
-def settings():
-    if request.method == 'POST':
-        print("success")
-        return render_template('index.html', commands=['start'])
-    else:
-        return render_template('index.html', commands=['start'])
-
-
 if __name__ == '__main__':
     app.run(host=config.APP_HOST, port=int(os.environ.get('PORT', 5000)))
