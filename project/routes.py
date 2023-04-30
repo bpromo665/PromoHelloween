@@ -1,12 +1,13 @@
 import config
-
 from project import bot
-from telebot import types
-import threading
 from project import app
 
-from project.modules import start
+from telebot import types
 from flask import request, render_template
+
+import threading
+
+from project.modules import start
 
 
 @bot.message_handler(commands=['start'])
