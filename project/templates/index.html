@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>My Bot</title>
+  </head>
+  <body>
+    <form method="post">
+      <label for="command">Select a command:</label>
+      <select name="command" id="command">
+        {% for command in commands %}
+        <option value="{{ command }}">{{ command }}</option>
+        {% endfor %}
+      </select>
+      {% if command == 'broadcast' %}
+      <label for="message">Enter a message:</label>
+      <input type="text" name="message" id="message">
+      {% endif %}
+      <button type="submit">Send</button>
+    </form>
+  </body>
+</html>
