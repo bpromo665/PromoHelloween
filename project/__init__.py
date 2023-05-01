@@ -6,7 +6,7 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy import create_engine
 
 
-bot = telebot.TeleBot(config.BOT_API)
+bot = telebot.TeleBot(config.BOT_API, threaded=False)
 logger = telebot.logger
 app = flask.Flask(__name__)
 engine = create_engine(config.DATABASE_URI)

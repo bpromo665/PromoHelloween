@@ -1,24 +1,14 @@
-import config
 from project import bot
-from project import app
 
-from telebot import types
-from flask import request, render_template
-
-import threading
-
-from project.modules import start
+import project.modules.start as start
+import project.modules.admin as admin
 
 
 @bot.message_handler(commands=['start'])
-def start_handler(message: types.Message):
+def start_handler(message):
     start.handle_start(message)
 
 
-@app.route('/settings', methods=['POST', 'GET'])
-def settings():
-    if request.method == 'POST':
-        print("success")
-        return render_template('index.html', commands=['start'])
-    else:
-        return render_template('index.html', commands=['start'])
+@bot.message_handler(commands=['admin'])
+def start_handler(message):
+    admin.handle_admin(message)
