@@ -6,6 +6,7 @@ import config
 import project.modules.start as start
 import xlrd
 from project.models import PromoCode
+import project.modules.general as general
 
 
 def handle_admin(message: types.Message):
@@ -29,6 +30,13 @@ def menu_handler(message: types.Message):
         bot.register_next_step_handler(message, add_promo_code)
     elif message.text == 'Додати товари':
         pass
+
+    elif message.text == '/start':
+        start.handle_start(message)
+
+    elif message.text == '/admin':
+        handle_admin(message)
+
     else:
         handle_admin(message)
 

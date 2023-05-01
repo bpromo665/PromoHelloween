@@ -7,7 +7,6 @@ import project.modules.general as general
 import project.modules.admin as admin
 
 
-
 def is_registered(telegram_id):
     if session.query(User).filter_by(telegram_id=str(telegram_id)).first():
         return True
@@ -43,8 +42,9 @@ def get_the_phone(message: types.Message):
 def handle_promo_code(message: types.Message):
     if message.text == '/admin':
         admin.handle_admin(message)
-    bot.send_message(message.chat.id, 'Чекаємо на ваш промокод...')
-    bot.register_next_step_handler(message, check_promo_code)
+    else:
+        bot.send_message(message.chat.id, 'Чекаємо на ваш промокод...')
+        bot.register_next_step_handler(message, check_promo_code)
 
 
 def check_promo_code(message: types.Message):
