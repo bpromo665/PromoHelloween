@@ -12,3 +12,4 @@ def start_command_check(func):  # This decorator requires with keyboard as middl
             func(message)
 
     return wrapper
+

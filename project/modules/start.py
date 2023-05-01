@@ -4,6 +4,8 @@ from telebot import types
 from project.models import User
 from project import session
 import project.modules.general as general
+import project.modules.admin as admin
+
 
 
 def is_registered(telegram_id):
@@ -39,6 +41,8 @@ def get_the_phone(message: types.Message):
 
 
 def handle_promo_code(message: types.Message):
+    if message.text == '/admin':
+        admin.handle_admin(message)
     bot.send_message(message.chat.id, 'Чекаємо на ваш промокод...')
     bot.register_next_step_handler(message, check_promo_code)
 

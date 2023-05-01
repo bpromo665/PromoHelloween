@@ -34,3 +34,10 @@ class PromoCode(Base):
     code = Column(String(150), unique=True)
     prize = Column(String(150))
     is_used = Column(Boolean, default=False)
+
+    @validates('code')
+    def validate_code(self, key, value):
+        if session.query(PromoCode).filter_by(code=str(value)).first() is None:
+            return value
+        else:
+            raise ValueError(f'Код {value} вже існує!\n')

@@ -1,12 +1,15 @@
-from project import bot
+import os
+
+from project import bot, session
 from telebot import types
 import config
 import project.modules.start as start
 import xlrd
+from project.models import PromoCode
 
 
 def handle_admin(message: types.Message):
-    if message.from_user.username is config.ADMIN_USERNAME:
+    if message.from_user.username == config.ADMIN_USERNAME:
         markup = types.ReplyKeyboardMarkup(True, True)
 
         button1 = types.KeyboardButton('Додати промо коди')
@@ -15,6 +18,7 @@ def handle_admin(message: types.Message):
         markup.row(button1)
         markup.row(button2)
         bot.send_message(message.chat.id, "Оберіть потрібну функцію:", reply_markup=markup)
+        bot.register_next_step_handler(message, menu_handler)
     else:
         start.handle_start(message)
 
@@ -31,10 +35,28 @@ def menu_handler(message: types.Message):
 
 @bot.message_handler(content_types=['document'])
 def add_promo_code(message: types.Message):
-    file = bot.get_file(message.document.file_id)
-    workboot = xlrd.open_workbook(file)
-    worksheet = workbook.sheet_by_index(0)
-    for i in range(0, 5):
-        for j in range(0, 3):
-            print(worksheet.cell_value(i, j), end='\t')
-        print('')
+    file_path = './Коды.xlsx'
+    try:
+        file = bot.get_file(message.document.file_id)
+        downloaded_file = bot.download_file(file.file_path)
+
+        with open(file_path, 'wb') as new_file:
+            new_file.write(downloaded_file)
+
+        workbook = xlrd.open_workbook("Коды.xlsx")
+        worksheet = workbook.sheet_by_index(0)
+
+        for i in range(0, worksheet.nrows):
+            for j in range(0, worksheet.ncols):
+                session.add(PromoCode(code=worksheet.cell_value(i, j)))
+        session.commit()
+    except Exception as e:
+        bot.send_message(message.chat.id, e)
+    finally:
+        try:
+            os.remove('Коды.xlsx')
+
+        except Exception as e:
+            print(e)
+
+        menu_handler(message)
