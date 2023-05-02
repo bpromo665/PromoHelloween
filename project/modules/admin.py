@@ -9,6 +9,7 @@ import xlwt
 
 from sqlalchemy import desc
 
+
 def get_user(username=None, telegram_id=None):
     try:
         if telegram_id is not None:
