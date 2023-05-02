@@ -54,6 +54,7 @@ def check_promo_code(message: types.Message):
     try:
         code = session.query(PromoCode).filter_by(code=str(message.text)).filter(PromoCode.prize.isnot(None)).first()
         user = session.query(User).filter_by(telegram_id=str(message.from_user.id)).first()
+        admins = session.query(User).filter(User.is_admin.is_(True))
         if code.is_used:
             bot.send_message(message.chat.id, 'Вибачте! Цей промокод більше не дійсний!')
         else:
@@ -62,12 +63,12 @@ def check_promo_code(message: types.Message):
                                               f"Ми передали інформацію нашому менеджеру! Найближчим часом він з вами зв'яжеться")
             code.is_used = True
             session.commit()
-
-            bot.send_message(chat_id=config.ADMIN_USERNAME, text=f'Юзер {user.username} виграв приз!\n'
-                                                                     f'Номер телефону: {user.phone_number}\n\n'
-                                                                     f'Виграш:\n'
-                                                                     f'Код: {code.code}\n'
-                                                                     f'Приз: {code.prize}')
+            for admin in admins:
+                bot.send_message(chat_id=admin.telegram_id, text=f'Юзер @{user.username} виграв приз!\n'
+                                                                         f'Номер телефону: {user.phone_number}\n\n'
+                                                                         f'Виграш:\n'
+                                                                         f'Код: {code.code}\n'
+                                                                         f'Приз: {code.prize}')
     except Exception as e:
         print(e)
     handle_promo_code(message)

@@ -5,6 +5,7 @@ from telebot import types
 import config
 import project.modules.start as start
 import xlrd
+import xlwt
 from project.models import PromoCode, User
 import project.modules.general as general
 
@@ -31,9 +32,11 @@ def handle_admin(message: types.Message):
         button2 = types.KeyboardButton('Додати товари')
         button3 = types.KeyboardButton('Додати адміністратора')
         button4 = types.KeyboardButton('Видалити адміністратора')
+        button5 = types.KeyboardButton('Вивантажити дані')
 
         markup.row(button1, button2)
         markup.row(button3, button4)
+        markup.row(button5)
 
         bot.send_message(message.chat.id, "Оберіть потрібну функцію:", reply_markup=markup)
         bot.register_next_step_handler(message, menu_handler)
@@ -57,11 +60,74 @@ def menu_handler(message: types.Message):
         bot.send_message(message.chat.id, "Надашліть мені юзернейм БЕЗ @")
         bot.register_next_step_handler(message, remove_admin)
 
+    elif message.text == 'Вивантажити дані':
+        bot.send_message(message.chat.id, "Вивантажуємо дані...")
+        get_data(message)
+
     elif message.text == '/start':
         start.handle_start(message)
 
     else:
         handle_admin(message)
+
+
+def get_data(message):
+    try:
+        users = session.query(User).all()
+        codes = session.query(PromoCode).all()
+
+        create_user_file(users).save("users.xlsx")
+        bot.send_document(message.chat.id, open('users.xlsx', 'rb'))
+
+        create_codes_file(codes).save("codes.xlsx")
+        bot.send_document(message.chat.id, open('codes.xlsx', 'rb'))
+
+        bot.send_message(message.chat.id, "Успішно!")
+
+    except Exception as e:
+        bot.send_message(message.chat.id, e)
+
+    finally:
+        message.text = ''
+        menu_handler(message)
+
+
+def create_user_file(data) -> xlwt.Workbook():
+    book = xlwt.Workbook()
+    sheet = book.add_sheet("Sheet1")
+
+    sheet.write(0, 0, "Ім'я")
+    sheet.write(0, 1, "Телеграм id")
+    sheet.write(0, 2, "username")
+    sheet.write(0, 3, "Номер телефону")
+    sheet.write(0, 4, "Адмін")
+
+    for i, user in enumerate(data):
+        sheet.write(i + 1, 0, user.id)
+        sheet.write(i + 1, 1, user.telegram_id)
+        sheet.write(i + 1, 2, user.username)
+        sheet.write(i + 1, 3, user.phone_number)
+        sheet.write(i + 1, 4, user.is_admin)
+
+    return book
+
+
+def create_codes_file(data) -> xlwt.Workbook():
+    book = xlwt.Workbook()
+    sheet = book.add_sheet("Sheet1")
+
+    sheet.write(0, 0, "id")
+    sheet.write(0, 1, "Код")
+    sheet.write(0, 2, "Приз")
+    sheet.write(0, 3, "Вже використаний")
+
+    for i, code in enumerate(data):
+        sheet.write(i + 1, 0, code.id)
+        sheet.write(i + 1, 1, code.code)
+        sheet.write(i + 1, 2, code.prize)
+        sheet.write(i + 1, 3, code.is_used)
+
+    return book
 
 
 def add_admin(message):
