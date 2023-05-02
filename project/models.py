@@ -15,6 +15,7 @@ class User(Base):
     telegram_id = Column(String(100), unique=True, nullable=False)
     username = Column(String(200), unique=True, nullable=False)
     phone_number = Column(String(13), unique=True, nullable=False)
+    is_admin = Column(Boolean, default=False)
 
     @validates('phone_number')
     def validate_phone_number(self, key, value):
@@ -24,7 +25,8 @@ class User(Base):
             raise ValueError('Неправильно набраний номер або юзер з таким номером вже зареєстрований!')
 
     def __repr__(self):
-        return f'id: {self.id}, telegram_id: {self.telegram_id}, username: {self.username}, phone_number: {self.phone_number}'
+        return f'id: {self.id}, telegram_id: {self.telegram_id}, username: {self.username}, ' \
+               f'phone_number: {self.phone_number} is admin: {self.is_admin}'
 
 
 class PromoCode(Base):
@@ -41,3 +43,6 @@ class PromoCode(Base):
             return value
         else:
             raise ValueError(f'Код {value} вже існує!\n')
+
+    def __repr__(self):
+        return f'code: {self.code}'
