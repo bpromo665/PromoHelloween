@@ -6,7 +6,7 @@ import project.modules.admin as admin
 
 @bot.message_handler(commands=['start'])
 def start_handler(message):
-    start.handle_start(message)
+    start.welcome_message(message)
 
 
 @bot.message_handler(commands=['admin'])

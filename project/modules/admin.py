@@ -1,14 +1,13 @@
-import os
-
 from project import bot, session
 from telebot import types
-import config
+
 import project.modules.start as start
+from project.models import PromoCode, User
+
 import xlrd
 import xlwt
-from project.models import PromoCode, User
-import project.modules.general as general
 
+from sqlalchemy import desc
 
 def get_user(username=None, telegram_id=None):
     try:
@@ -26,7 +25,7 @@ def handle_admin(message: types.Message):
     user = get_user(telegram_id=message.from_user.id)
 
     if user is not None and user.is_admin:
-        markup = types.ReplyKeyboardMarkup(True, True)
+        markup = types.ReplyKeyboardMarkup(one_time_keyboard=True)
 
         button1 = types.KeyboardButton('Додати промо коди')
         button2 = types.KeyboardButton('Додати товари')
@@ -73,8 +72,8 @@ def menu_handler(message: types.Message):
 
 def get_data(message):
     try:
-        users = session.query(User).all()
-        codes = session.query(PromoCode).all()
+        users = session.query(User).order_by(desc(User.is_admin)).all()
+        codes = session.query(PromoCode).order_by(desc(PromoCode.prize.isnot(None)), desc(PromoCode.is_used)).all()
 
         create_user_file(users).save("users.xlsx")
         bot.send_document(message.chat.id, open('users.xlsx', 'rb'))
@@ -116,16 +115,14 @@ def create_codes_file(data) -> xlwt.Workbook():
     book = xlwt.Workbook()
     sheet = book.add_sheet("Sheet1")
 
-    sheet.write(0, 0, "id")
-    sheet.write(0, 1, "Код")
-    sheet.write(0, 2, "Приз")
-    sheet.write(0, 3, "Вже використаний")
+    sheet.write(0, 0, "Код")
+    sheet.write(0, 1, "Приз")
+    sheet.write(0, 2, "Вже використаний")
 
     for i, code in enumerate(data):
-        sheet.write(i + 1, 0, code.id)
-        sheet.write(i + 1, 1, code.code)
-        sheet.write(i + 1, 2, code.prize)
-        sheet.write(i + 1, 3, code.is_used)
+        sheet.write(i + 1, 0, code.code)
+        sheet.write(i + 1, 1, code.prize)
+        sheet.write(i + 1, 2, code.is_used)
 
     return book
 
@@ -167,9 +164,14 @@ def add_promo_code(message: types.Message):
         workbook = xlrd.open_workbook("Коды.xlsx")
         worksheet = workbook.sheet_by_index(0)
 
+        msg = bot.send_message(message.chat.id, 'Зачекайте, ми завантажуємо дані...')
+        promo_codes = []
         for i in range(0, worksheet.nrows):
-            for j in range(0, worksheet.ncols):
-                session.add(PromoCode(code=worksheet.cell_value(i, j)))
+            if i % 500 == 0:
+                bot.edit_message_text(chat_id=message.chat.id, text=f'Завантажили {i} дописів', message_id=msg.id)
+            promo_codes.append(PromoCode(code=worksheet.cell_value(i, 0)))
+
+        session.bulk_save_objects(promo_codes)
         session.commit()
         bot.send_message(message.chat.id, 'Схоже що дані були успішно додані до базі даних!')
     except Exception as e:
@@ -194,14 +196,13 @@ def add_promo_items(message: types.Message):
         codes = session.query(PromoCode).filter_by(prize=None).all()
 
         iter = 0
-
+        bot.send_message(message.chat.id, 'Будь ласка зачекайте, ми завантажуємо дані...')
         for i in range(0, worksheet.nrows):
             for j in range(0, worksheet.ncols):
                 if j == 1:
                     for k in range(0, int(worksheet.cell_value(i, 1))):
                         codes[iter].prize = worksheet.cell_value(i, 0)
                         iter += 1
-        bot.send_message(message.chat.id, 'Будь ласка зачекайте, ми завантажуємо дані...')
         session.commit()
         bot.send_message(message.chat.id, 'Схоже що дані були успішно додані до базі даних!')
     except Exception as e:
