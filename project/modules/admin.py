@@ -46,10 +46,12 @@ def handle_admin(message: types.Message):
 
 def menu_handler(message: types.Message):
     if message.text == 'Додати промо коди':
-        bot.send_message(message.chat.id, "Відправте мені файл у форматі .xlsx")
+        bot.send_message(message.chat.id, "Відправте мені файл у форматі .xlsx\n\n"
+                                          "Зауважте! Щоб промо коди правильно завантажились вони повинні мати лише одне поле |Промокод|")
         bot.register_next_step_handler(message, add_promo_code)
     elif message.text == 'Додати товари':
-        bot.send_message(message.chat.id, "Відправте мені файл у форматі .xlsx")
+        bot.send_message(message.chat.id, "Відправте мені файл у форматі .xlsx\n\n"
+                                          "Зауважте! Щоб товари правильно завантажились вони повинні мати 2 поял |Назва товару| - |Кількість товару|")
         bot.register_next_step_handler(message, add_promo_items)
 
     elif message.text == 'Додати адміністратора':
