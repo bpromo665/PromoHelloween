@@ -22,7 +22,7 @@ else:
             update = telebot.types.Update.de_json(json_string)
             print('[GOT UPDATES]')
 
-            bot.skip_pending = True
+            # bot.skip_pending = True
 
             bot.process_new_updates([update])
             return 'ok', 200
