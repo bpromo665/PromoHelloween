@@ -17,12 +17,12 @@ class User(Base):
     phone_number = Column(String(13), unique=True, nullable=False)
     is_admin = Column(Boolean, default=False)
 
-    # @validates('phone_number')
-    # def validate_phone_number(self, key, value):
-    #     if re.fullmatch(regex, value) and session.query(User).filter_by(phone_number=str(value)).first() is None:
-    #         return value
-    #     else:
-    #         raise ValueError('Неправильно набраний номер або юзер з таким номером вже зареєстрований!')
+    @validates('phone_number')
+    def validate_phone_number(self, key, value):
+        if session.query(User).filter_by(phone_number=str(value)).first() is None:
+            return value
+        else:
+            raise ValueError('Неправильно набраний номер або юзер з таким номером вже зареєстрований!')
 
     def __repr__(self):
         return f'id: {self.id}, telegram_id: {self.telegram_id}, username: {self.username}, ' \

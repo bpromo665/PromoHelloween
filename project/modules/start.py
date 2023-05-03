@@ -45,20 +45,21 @@ def get_the_phone(message: types.Message):
         handle_promo_code(message)
     except ValueError as value_error:
         bot.send_message(message.chat.id, value_error)
-        handle_start(message)
 
     except Exception as e:
         print(e)
         bot.send_message(message.chat.id, 'Здається щось пішло не так! Спробуйте ще раз')
+    finally:
         handle_start(message)
 
 
 def handle_promo_code(message: types.Message):
+
     if message.text == '/admin':
         message.text = ''
         admin.handle_admin(message)
     else:
-        bot.send_message(message.chat.id, 'Відправте нам промокод! ⬇️')
+        bot.send_message(message.chat.id, 'Відправте нам промокод! ⬇️', reply_markup=types.ReplyKeyboardRemove())
         bot.register_next_step_handler(message, check_promo_code)
 
 
