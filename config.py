@@ -1,6 +1,6 @@
 import os
 
-BOT_API = '6065135429:AAHQlkhjys7E2XpLhxHaC8jk9xzrQyISnZk'
+BOT_API = '6013400790:AAGr7s2KQIFPBkubuvkDJlHqg5Vm5UzOgSE'
 
 APP_HOST = '0.0.0.0'  # Default value
 APP_PORT = '8444'  # Default value
