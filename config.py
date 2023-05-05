@@ -30,7 +30,7 @@ DATABASE_URI = 'postgresql://promo:kE5Cr8JLQGtDkc14UqDGKgIbZAnQod7o@dpg-ch7qsf02
 # DATABASE_URI = 'postgresql://promo:kE5Cr8JLQGtDkc14UqDGKgIbZAnQod7o@dpg-ch7qsf02qv2864o96bfg-a.frankfurt-postgres.render.com/promo'  # test
 
 # app config
-DEBUG = True  # set True if you want to run it on your pc
+DEBUG = False  # set True if you want to run it on your pc
 
 ADMIN_USERNAME = 'chikundant'
 

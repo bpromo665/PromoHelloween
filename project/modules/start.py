@@ -50,7 +50,6 @@ def get_the_phone(message: types.Message):
                                           '3. Ввести свій промокод у чат бота\n'
                                           '4. Отримати винагороду 🥳\n\n'
                                           '_Після використання промокод стає недійсний, отже подарунок ви зможете отримати лише один раз_', parse_mode='Markdown')
-        handle_promo_code(message)
     except ValueError as value_error:
         bot.send_message(message.chat.id, value_error)
 
@@ -81,7 +80,7 @@ def check_promo_code(message: types.Message):
             bot.send_message(message.chat.id, 'Вибачте! Цей промокод більше не дійсний!')
         else:
             bot.send_message(message.chat.id, f"Наші вітання! 🥳\n\n"
-                                              f"Ви виграли {code.prize} 🎁\n\n"
+                                              f"Ви виграли {code.prize} \n\n"
                                               f"Ми передали інформацію нашому менеджеру! Найближчим часом він з вами зв'яжеться")
             code.is_used = True
             session.commit()
