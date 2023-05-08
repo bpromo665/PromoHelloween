@@ -60,6 +60,7 @@ def get_the_phone(message: types.Message):
         handle_start(message)
 
 
+@bot.message_handler(content_types=['text'])
 def handle_promo_code(message: types.Message):
 
     if message.text == '/admin':
