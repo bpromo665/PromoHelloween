@@ -72,12 +72,16 @@ def handle_promo_code(message: types.Message):
 
 def check_promo_code(message: types.Message):
     try:
-        code = session.query(PromoCode).filter_by(code=str(message.text)).filter(PromoCode.prize.isnot(None)).first()
+        code = session.query(PromoCode).filter_by(code=str(message.text)).first()
         user = session.query(User).filter_by(telegram_id=str(message.from_user.id)).first()
         admins = session.query(User).filter(User.is_admin.is_(True))
 
         if code.is_used:
             bot.send_message(message.chat.id, 'Вибачте! Цей промокод більше не дійсний!')
+        elif code.prize is None:
+            bot.send_message(message.chat.id, 'Пробач друже, цього разу ти нічого не виграв 😢')
+            code.is_used = True
+            session.commit()
         else:
             bot.send_message(message.chat.id, f"Наші вітання! 🥳\n\n"
                                               f"Ви виграли {code.prize} \n\n"
