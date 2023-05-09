@@ -23,6 +23,7 @@ def get_user(username=None, telegram_id=None):
         return None
 
 
+@bot.message_handler(content_types=['text'])
 def handle_admin(message: types.Message):
 
     user = get_user(telegram_id=message.from_user.id)
@@ -179,20 +180,19 @@ def add_promo_code(message: types.Message):
                 promo_codes = []
             promo_codes.append(PromoCode(code=worksheet.cell_value(i, 0)))
 
-        print('AAAAAAAAAAAAAAAAAAAAA')
         session.bulk_save_objects(promo_codes)
         session.commit()
         bot.send_message(message.chat.id, 'Схоже що дані були успішно додані до базі даних!')
     except Exception as e:
         bot.send_message(message.chat.id, e)
-        os.remove(file_path)
+        session.rollback()
     finally:
+        os.remove(file_path)
         handle_admin(message)
 
 
 @bot.message_handler(content_types=['document'])
 def add_promo_items(message: types.Message):
-    print('add_promo_items function')
     file_path = './Товары.xlsx'
     try:
         file = bot.get_file(message.document.file_id)
@@ -214,11 +214,12 @@ def add_promo_items(message: types.Message):
                     for k in range(0, int(worksheet.cell_value(i, 1))):
                         codes[iter].prize = worksheet.cell_value(i, 0)
                         iter += 1
-        print('BBBBBBBB')
         session.commit()
         bot.send_message(message.chat.id, 'Схоже що дані були успішно додані до базі даних!')
     except Exception as e:
+        print('Exeption from add_promo_items')
         bot.send_message(message.chat.id, e)
+        session.rollback()
     finally:
         os.remove(file_path)
         handle_admin(message)
