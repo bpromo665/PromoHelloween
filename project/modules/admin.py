@@ -175,6 +175,8 @@ def add_promo_code(message: types.Message):
         for i in range(0, worksheet.nrows):
             if i % 500 == 0:
                 bot.edit_message_text(chat_id=message.chat.id, text=f'Завантажили {i} дописів', message_id=msg.id)
+                session.bulk_save_objects(promo_codes)
+                promo_codes = []
             promo_codes.append(PromoCode(code=worksheet.cell_value(i, 0)))
 
         print('AAAAAAAAAAAAAAAAAAAAA')
