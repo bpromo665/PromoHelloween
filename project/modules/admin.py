@@ -1,3 +1,5 @@
+import os
+
 from project import bot, session
 from telebot import types
 
@@ -157,6 +159,7 @@ def remove_admin(message):
 @bot.message_handler(content_types=['document'])
 def add_promo_code(message: types.Message):
     file_path = './Коды.xlsx'
+    print('add_promo_code function')
     try:
         file = bot.get_file(message.document.file_id)
         downloaded_file = bot.download_file(file.file_path)
@@ -174,17 +177,20 @@ def add_promo_code(message: types.Message):
                 bot.edit_message_text(chat_id=message.chat.id, text=f'Завантажили {i} дописів', message_id=msg.id)
             promo_codes.append(PromoCode(code=worksheet.cell_value(i, 0)))
 
+        print('AAAAAAAAAAAAAAAAAAAAA')
         session.bulk_save_objects(promo_codes)
         session.commit()
-        msg = bot.send_message(message.chat.id, 'Схоже що дані були успішно додані до базі даних!')
+        bot.send_message(message.chat.id, 'Схоже що дані були успішно додані до базі даних!')
     except Exception as e:
-        msg = bot.send_message(message.chat.id, e)
+        bot.send_message(message.chat.id, e)
+        os.remove(file_path)
     finally:
         handle_admin(message)
 
 
 @bot.message_handler(content_types=['document'])
 def add_promo_items(message: types.Message):
+    print('add_promo_items function')
     file_path = './Товары.xlsx'
     try:
         file = bot.get_file(message.document.file_id)
@@ -206,9 +212,11 @@ def add_promo_items(message: types.Message):
                     for k in range(0, int(worksheet.cell_value(i, 1))):
                         codes[iter].prize = worksheet.cell_value(i, 0)
                         iter += 1
+        print('BBBBBBBB')
         session.commit()
         bot.send_message(message.chat.id, 'Схоже що дані були успішно додані до базі даних!')
     except Exception as e:
         bot.send_message(message.chat.id, e)
     finally:
+        os.remove(file_path)
         handle_admin(message)
