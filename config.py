@@ -34,8 +34,6 @@ DATABASE_URI = 'postgresql://promo:kE5Cr8JLQGtDkc14UqDGKgIbZAnQod7o@dpg-ch7qsf02
 # app config
 DEBUG = False  # set True if you want to run it on your pc
 
-ADMIN_USERNAME = 'chikundant'
-
 
 class Config(object):
     SECRET_KEY = os.environ.get('SECRET_KEY') or KEY
