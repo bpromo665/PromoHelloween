@@ -176,11 +176,11 @@ def add_promo_code(message: types.Message):
 
         session.bulk_save_objects(promo_codes)
         session.commit()
-        bot.send_message(message.chat.id, 'Схоже що дані були успішно додані до базі даних!')
+        msg = bot.send_message(message.chat.id, 'Схоже що дані були успішно додані до базі даних!')
     except Exception as e:
-        bot.send_message(message.chat.id, e)
+        msg = bot.send_message(message.chat.id, e)
     finally:
-        menu_handler(message)
+        handle_admin(message)
 
 
 @bot.message_handler(content_types=['document'])
@@ -211,4 +211,4 @@ def add_promo_items(message: types.Message):
     except Exception as e:
         bot.send_message(message.chat.id, e)
     finally:
-        menu_handler(message)
+        handle_admin(message)
