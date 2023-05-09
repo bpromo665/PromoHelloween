@@ -178,6 +178,7 @@ def add_promo_code(message: types.Message):
                 bot.edit_message_text(chat_id=message.chat.id, text=f'Завантажили {i} дописів', message_id=msg.id)
                 session.bulk_save_objects(promo_codes)
                 promo_codes = []
+                print('500')
             promo_codes.append(PromoCode(code=worksheet.cell_value(i, 0)))
 
         session.bulk_save_objects(promo_codes)
@@ -187,6 +188,7 @@ def add_promo_code(message: types.Message):
         bot.send_message(message.chat.id, e)
         session.rollback()
     finally:
+        print('Finaly block')
         os.remove(file_path)
         handle_admin(message)
 
@@ -221,5 +223,6 @@ def add_promo_items(message: types.Message):
         bot.send_message(message.chat.id, e)
         session.rollback()
     finally:
+        print('Finaly block')
         os.remove(file_path)
         handle_admin(message)
