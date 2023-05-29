@@ -13,7 +13,7 @@ class User(Base):
 
     id = Column(Integer, primary_key=True)
     telegram_id = Column(String(100), unique=True, nullable=False)
-    username = Column(String(200), unique=True, nullable=False)
+    username = Column(String(200), unique=True, nullable=True)
     phone_number = Column(String(13), unique=True, nullable=False)
     is_admin = Column(Boolean, default=False)
 
