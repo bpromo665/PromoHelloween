@@ -141,6 +141,7 @@ def add_admin(message):
         bot.send_message(message.chat.id, f"Успішно додали админістратора\n {user}")
     except Exception as e:
         bot.send_message(message.chat.id, e)
+        session.rollback()
     finally:
         menu_handler(message)
 
@@ -153,6 +154,7 @@ def remove_admin(message):
         bot.send_message(message.chat.id, f"Успішно видалили админістратора\n {user}")
     except Exception as e:
         bot.send_message(message.chat.id, e)
+        session.rollback()
     finally:
         menu_handler(message)
 
