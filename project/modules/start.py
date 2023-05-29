@@ -51,10 +51,12 @@ def get_the_phone(message: types.Message):
                                           '4. Отримати винагороду 🥳\n\n'
                                           '_Після використання промокод стає недійсний, отже подарунок ви зможете отримати лише один раз_', parse_mode='Markdown')
     except ValueError as value_error:
+        session.rollback()
         bot.send_message(message.chat.id, value_error)
 
     except Exception as e:
         print(e)
+        session.rollback()
         bot.send_message(message.chat.id, 'Здається щось пішло не так! Спробуйте ще раз')
     finally:
         handle_start(message)
