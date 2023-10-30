@@ -8,7 +8,7 @@ APP_HOST = '0.0.0.0'  # Default value
 APP_PORT = '8444'  # Default value
 
 # Webhook configuration
-APP_NAME = 'https://promohelloween.onrender.com/'
+APP_NAME = 'promohelloween.onrender.com'
 WEB_HOOK_URL = f'https://{APP_NAME}/{BOT_API}'
 
 
