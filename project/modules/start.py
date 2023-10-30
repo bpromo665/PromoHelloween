@@ -16,10 +16,9 @@ def is_registered(telegram_id):
 
 def welcome_message(message: types.Message):
     if not is_registered(message.from_user.id):
-        bot.send_message(message.chat.id, f'Привіт, друже!\n\n'
-                                          f'Unity x Karma проводять великий розіграш на 10 кальянів та мерч від Unity🖤\n\n'
-                                          f'Більше шансів та ще більше крутих призів.\n\n'
-                                          f'Все що потрібно — це придбати банку та отримати код, завдяки якому в тебе буде можливість виграти омріяний приз🎁')
+        bot.send_message(message.chat.id, f'~~Вітаю!~~ Цукерки або смерть🎃?\n\n'
+                                          f'Бачу що ти вже вибрав цукерки, тому маєш можливість виграти 1 із 300 призів,\n\n'
+                                          f'які ми підготували.\n\n', parse_mode='MarkdownV2')
 
     handle_start(message)
 
@@ -31,7 +30,7 @@ def handle_start(message: types.Message):
         markup = types.ReplyKeyboardMarkup(one_time_keyboard=True, resize_keyboard=True)
         reg_button = types.KeyboardButton(text="Поділитися номером", request_contact=True)
         markup.add(reg_button)
-        bot.send_message(message.chat.id, 'Будь ласка, надішліть Ваш контактний номер телефону, натиснувши кнопку внизу 👇',
+        bot.send_message(message.chat.id, 'Нам потрібен твій номер телефону, щоб звʼязатися з тобою, коли ти виграєш приз. 📲',
                          reply_markup=markup)
         bot.register_next_step_handler(message, get_the_phone)
 
@@ -43,7 +42,7 @@ def get_the_phone(message: types.Message):
         user.phone_number = message.contact.phone_number
         session.add(user)
         session.commit()
-        bot.send_message(message.chat.id, 'Дякуємо! Ви були успішно зареєстровані!🔑')
+        bot.send_message(message.chat.id, 'Дякую! Тепер ми знаємо, як зв\'язатись з тобою.🔑')
         bot.send_message(message.chat.id, 'Як це працює?😎\n\n'
                                           '1. Придбати банку у будь-кого з наших партнерів\n'
                                           '2. Отримати виграшний промокод\n'
@@ -57,7 +56,7 @@ def get_the_phone(message: types.Message):
     except Exception as e:
         print(e)
         session.rollback()
-        bot.send_message(message.chat.id, 'Здається щось пішло не так! Спробуйте ще раз')
+        bot.send_message(message.chat.id, 'Магічна куля не бачить такого промокоду. Перевір уважно ще раз.')
     finally:
         handle_start(message)
 
@@ -69,7 +68,7 @@ def handle_promo_code(message: types.Message):
         message.text = ''
         admin.handle_admin(message)
     else:
-        bot.send_message(message.chat.id, 'Відправте нам промокод! ⬇️', reply_markup=types.ReplyKeyboardRemove())
+        bot.send_message(message.chat.id, 'Напиши свій промокод, а я спробую начаклувати тобі перемогу! ⬇️', reply_markup=types.ReplyKeyboardRemove())
         bot.register_next_step_handler(message, check_promo_code)
 
 
@@ -80,14 +79,15 @@ def check_promo_code(message: types.Message):
         admins = session.query(User).filter(User.is_admin.is_(True))
 
         if code.is_used:
-            bot.send_message(message.chat.id, 'Вибачте! Цей промокод більше не дійсний!')
+            bot.send_message(message.chat.id, 'Хтось вже використав цей промокод. Спробуй ввести інший. ☹️')
         elif code.prize is None:
-            bot.send_message(message.chat.id, 'Пробач друже, цього разу ти нічого не виграв 😢')
+            bot.send_message(message.chat.id, 'Ой-ой! Здається злі духи проти твоєї перемоги... Спробуй інший промокод.')
             code.is_used = True
             session.commit()
         else:
-            bot.send_message(message.chat.id, f"Наші вітання! 🥳\n\n"
-                                              f"Ви виграли {code.prize} \n\n"
+            bot.send_message(message.chat.id, f"Вітаємо з перемогою!  🎊🥳🎉\n\n"
+                                              f"Ти - справжній чемпіон у світі тіней і жахів. Ура! 😈\n\n"
+                                              f"Ти виграв {code.prize} \n\n"
                                               f"Ми передали інформацію нашому менеджеру! Найближчим часом він з вами зв'яжеться")
             code.is_used = True
             session.commit()
