@@ -63,12 +63,16 @@ def get_the_phone(message: types.Message):
 
 @bot.message_handler(content_types=['text'])
 def handle_promo_code(message: types.Message):
-
+    temp = 0
     if message.text == '/admin':
         message.text = ''
         admin.handle_admin(message)
     else:
-        bot.send_message(message.chat.id, 'Напиши свій промокод, а я спробую начаклувати тобі перемогу! ⬇️', reply_markup=types.ReplyKeyboardRemove())
+        if temp == 0:
+            bot.send_message(message.chat.id, 'Напиши свій промокод, а я спробую начаклувати тобі перемогу! ⬇️',
+                             reply_markup=types.ReplyKeyboardRemove())
+        else:
+            bot.send_message(message.chat.id, 'Магічна куля не бачить такого промокоду. Перевір уважно ще раз. 🔮', reply_markup=types.ReplyKeyboardRemove())
         bot.register_next_step_handler(message, check_promo_code)
 
 
