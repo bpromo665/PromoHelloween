@@ -49,6 +49,8 @@ def get_the_phone(message: types.Message):
                                           '3. Ввести свій промокод у чат бота\n'
                                           '4. Отримати винагороду 🥳\n\n'
                                           '_Після використання промокод стає недійсний, отже подарунок ви зможете отримати лише один раз_', parse_mode='Markdown')
+        bot.send_message(message.chat.id, 'Напиши свій промокод, а я спробую начаклувати тобі перемогу! ⬇️',
+                         reply_markup=types.ReplyKeyboardRemove())
     except ValueError as value_error:
         session.rollback()
         bot.send_message(message.chat.id, value_error)
@@ -68,12 +70,8 @@ def handle_promo_code(message: types.Message):
         message.text = ''
         admin.handle_admin(message)
     else:
-        if temp == 0:
-            bot.send_message(message.chat.id, 'Напиши свій промокод, а я спробую начаклувати тобі перемогу! ⬇️',
-                             reply_markup=types.ReplyKeyboardRemove())
-            temp += 1
-        else:
-            bot.send_message(message.chat.id, 'Магічна куля не бачить такого промокоду. Перевір уважно ще раз. 🔮', reply_markup=types.ReplyKeyboardRemove())
+
+       # bot.send_message(message.chat.id, 'Магічна куля не бачить такого промокоду. Перевір уважно ще раз. 🔮', reply_markup=types.ReplyKeyboardRemove())
         bot.register_next_step_handler(message, check_promo_code)
 
 
@@ -104,5 +102,6 @@ def check_promo_code(message: types.Message):
                                                                          f'Приз: {code.prize}')
     except Exception as e:
         print(e)
-        # bot.send_message(message.chat.id, 'Здається ви ввели неправильний промокод!❌')
+        bot.send_message(message.chat.id, 'Магічна куля не бачить такого промокоду. Перевір уважно ще раз. 🔮',
+                         reply_markup=types.ReplyKeyboardRemove())
     handle_promo_code(message)
