@@ -71,6 +71,7 @@ def handle_promo_code(message: types.Message):
         if temp == 0:
             bot.send_message(message.chat.id, 'Напиши свій промокод, а я спробую начаклувати тобі перемогу! ⬇️',
                              reply_markup=types.ReplyKeyboardRemove())
+            temp += 1
         else:
             bot.send_message(message.chat.id, 'Магічна куля не бачить такого промокоду. Перевір уважно ще раз. 🔮', reply_markup=types.ReplyKeyboardRemove())
         bot.register_next_step_handler(message, check_promo_code)
